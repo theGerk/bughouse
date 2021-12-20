@@ -55,11 +55,13 @@ function makeBoard (){
     for(let l = 1; l <= boardSize; l++){
         for(let d = 1; d <= boardSize; d++){
             let squ: square = {letter: l, digit: d, peice: null}
-            board[l-1][d-1] = squ;
+            board[((l-1)*8)+(d-1)] = squ;
         }
     }
     return board;
 }
+
+
 
 
 let startingPosition: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -72,7 +74,7 @@ function addPeices (board:square[], startingPosition: string){
     while(currentCharacter != " "){
         while(currentCharacter != "/"){
             if(typeof currentCharacter == "string" ){
-            board[column -1][row - 1].peice = currentCharacter;
+            board[((column-1)*8)+(row-1)].peice = currentCharacter;
             currentElement++;
             currentCharacter = startingPosition.charAt(currentElement);
             column++;
@@ -89,15 +91,14 @@ function addPeices (board:square[], startingPosition: string){
     }
 }
 
-//magically gotten from user
+//magically gotten
 let startSquare: square = {letter: letters.a, digit: 1, peice: "R"};
 let endSquare: square = {letter: letters.a, digit: 2, peice: "R"};
 
 function movePeice(board: square[], startSquare: square, endSquare: square){
-    board[endSquare.letter][endSquare.digit] = startSquare.peice;
-    board[startSquare.letter][startSquare.digit] = null;
+    board[((endSquare.letter - 1) * 8) + (endSquare.digit -1)].peice = startSquare.peice;
+    board[((startSquare.letter - 1) * 8) + (startSquare.digit -1)].peice = null;
 }
-
 
 /*
 function addPeices (board: square[]){
