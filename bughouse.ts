@@ -75,6 +75,10 @@ function addPeices (board:square[], startingPosition: string){
         while(currentCharacter != "/"){
             if(typeof currentCharacter == "string" ){
             board[((column-1)*8)+(row-1)].peice = currentCharacter;
+            let letter: string = column + 97;  // + 97 is ascii offset for a
+            let number: string = row;
+            let letNum: string = letter + number;
+            document.getElementById(letNum).innerHTML = currentCharacter;
             currentElement++;
             currentCharacter = startingPosition.charAt(currentElement);
             column++;
@@ -91,15 +95,40 @@ function addPeices (board:square[], startingPosition: string){
     }
 }
 
-//magically gotten
-let startSquare: square = {letter: letters.a, digit: 1, peice: "R"};
-let endSquare: square = {letter: letters.a, digit: 2, peice: "R"};
 
-function movePeice(board: square[], startSquare: square, endSquare: square){
-    board[((endSquare.letter - 1) * 8) + (endSquare.digit -1)].peice = startSquare.peice;
-    board[((startSquare.letter - 1) * 8) + (startSquare.digit -1)].peice = null;
+let startPos = null;
+function getPeiceMovement (square){
+// if not clicked anywhere yet, and clicked a square, set click to startPos. if not clicked anywhere yet and clicked not a square, do nothing. 
+// if already clicked, and clicked a square, set click to endPos. if already clicked and clicked not a square, set startPos to null
+    if(startPos == null && square.length == 2){
+        startPos = document.getElementById(square).innerHTML;
+    }
+    else if (startPos != null && square.length == 2) {
+        let endPos = document.getElementById(square).innerHTML;
+        movePeice(board, startPos, endPos);
+        startPos = null;
+        
+    }
+    else if(startPos != null && square.length != 2){
+        startPos = null;
+    }
 }
 
+
+
+
+function movePeice(board: square[], startPos: string, endPos: string){
+    //let startSquareLetter = +endPos.charAt(0) - 97;
+    board[((letters.(endPos.charAt(0)) - 1) * 8) + (letters.(endPos.charAt(1)) - 1)].peice = board[((letters.(startPos.charAt(0)) - 1) * 8) + (letters.a(startPos.charAt(1)) - 1)].peice;
+    board[((letters.(startPos.charAt(0)) - 1) * 8) + (letters.a(startPos.charAt(1)) - 1)].peice = null;
+
+    document.getElementById(startPos).innerHTML = "";
+    document.getElementById(endPos).innerHTML = board[((letters.(endPos.charAt(0)) - 1) * 8) + (letters.(endPos.charAt(1)) - 1)].peice;
+}
+
+
+
+// .charA
 /*
 function addPeices (board: square[]){
     // place white pons
