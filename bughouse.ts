@@ -48,14 +48,14 @@ enum peiceType {
 
 
 let board: square[] = makeBoard();
-function makeBoard (){
+function makeBoard() {
     let board: square[] = [];
     board.length = 64;
     const boardSize = 8;
-    for(let l = 1; l <= boardSize; l++){
-        for(let d = 1; d <= boardSize; d++){
-            let squ: square = {letter: l, digit: d, peice: null}
-            board[((l-1)*8)+(d-1)] = squ;
+    for (let l = 1; l <= boardSize; l++) {
+        for (let d = 1; d <= boardSize; d++) {
+            let squ: square = { letter: l, digit: d, peice: null }
+            board[((l - 1) * 8) + (d - 1)] = squ;
         }
     }
     return board;
@@ -65,51 +65,59 @@ function makeBoard (){
 
 
 let startingPosition: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
-function addPeices (board:square[], startingPosition: string){
+addPeices(board, startingPosition);
+function addPeices(board: square[], startingPosition: string) {
     let currentElement = 0;
     let currentCharacter = startingPosition.charAt(currentElement);
     let column = 1;
     let row = 8;
-    while(currentCharacter != " "){
-        while(currentCharacter != "/"){
-            if(typeof currentCharacter == "string" ){
-            board[((column-1)*8)+(row-1)].peice = currentCharacter;
-            let letter: string = column + 97;  // + 97 is ascii offset for a
-            let number: string = row;
-            let letNum: string = letter + number;
-            document.getElementById(letNum).innerHTML = currentCharacter;
-            currentElement++;
-            currentCharacter = startingPosition.charAt(currentElement);
-            column++;
-            }
-            else if(typeof currentCharacter == "number"){
-                column = column + currentCharacter;
-            }
-            else{
-                alert("something went wrong in addPeices function!\n");
-            }
+    while (currentCharacter != " ") {
+        if(currentCharacter == "/") {
+            row--;
+            column = 1;
         }
-        row--;
-        column = 1;
+        else if (isNaN(+currentCharacter)) {
+            board[((column - 1) * 8) + (row - 1)].peice = currentCharacter;
+            column++;
+        }
+        else {
+            column = column + +currentCharacter;
+        }
+        currentElement++;
+        currentCharacter = startingPosition.charAt(currentElement);
     }
+
 }
 
 
-let startPos = null;
-function getPeiceMovement (square){
-// if not clicked anywhere yet, and clicked a square, set click to startPos. if not clicked anywhere yet and clicked not a square, do nothing. 
-// if already clicked, and clicked a square, set click to endPos. if already clicked and clicked not a square, set startPos to null
-    if(startPos == null && square.length == 2){
-        startPos = document.getElementById(square).innerHTML;
+window.addEventListener('load', function () {
+    for (let row = 8; row >= 1; row--) {
+        for (let column = 8; column >= 1; column--) {
+            let button = document.createElement('button');
+            let buttonID: string = letters[column] + row.toString();
+            button.id = buttonID;
+            button.innerHTML = board[((column - 1) * 8) + (row - 1)].peice || ' ';
+            button.onclick = function () { getPeiceMovement(buttonID); }
+
+            document.body.appendChild(button);
+        }
+        document.body.appendChild(document.createElement('br'));
+    }
+});
+
+let startPos: string = null;
+function getPeiceMovement(square) {
+    // if not clicked anywhere yet, and clicked a square, set click to startPos. if not clicked anywhere yet and clicked not a square, do nothing. 
+    // if already clicked, and clicked a square, set click to endPos. if already clicked and clicked not a square, set startPos to null
+    if (startPos == null && square.length == 2) {
+        startPos = square;
     }
     else if (startPos != null && square.length == 2) {
-        let endPos = document.getElementById(square).innerHTML;
+        let endPos = square;
         movePeice(board, startPos, endPos);
         startPos = null;
-        
     }
-    else if(startPos != null && square.length != 2){
+    else if (startPos != null && square.length != 2) {
         startPos = null;
     }
 }
@@ -117,18 +125,23 @@ function getPeiceMovement (square){
 
 
 
-function movePeice(board: square[], startPos: string, endPos: string){
+function movePeice(board: square[], startPos: string, endPos: string) {
     //let startSquareLetter = +endPos.charAt(0) - 97;
-    board[((letters.(endPos.charAt(0)) - 1) * 8) + (letters.(endPos.charAt(1)) - 1)].peice = board[((letters.(startPos.charAt(0)) - 1) * 8) + (letters.a(startPos.charAt(1)) - 1)].peice;
-    board[((letters.(startPos.charAt(0)) - 1) * 8) + (letters.a(startPos.charAt(1)) - 1)].peice = null;
+    board[((letters[endPos.charAt(0)] - 1) * 8) + (+endPos.charAt(1) - 1)].peice = board[((letters[startPos.charAt(0)] - 1) * 8) + (+startPos.charAt(1) - 1)].peice;
+    board[((letters[startPos.charAt(0)] - 1) * 8) + (+startPos.charAt(1) - 1)].peice = null;
 
     document.getElementById(startPos).innerHTML = "";
-    document.getElementById(endPos).innerHTML = board[((letters.(endPos.charAt(0)) - 1) * 8) + (letters.(endPos.charAt(1)) - 1)].peice;
+    document.getElementById(endPos).innerHTML = board[((letters[endPos.charAt(0)] - 1) * 8) + (+endPos.charAt(1) - 1)].peice;
 }
 
 
 
-// .charA
+
+
+//     <button id="a1" onclick="getPeiceMovement('a1');">a1</button>
+
+
+
 /*
 function addPeices (board: square[]){
     // place white pons

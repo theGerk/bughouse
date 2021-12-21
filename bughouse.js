@@ -48,43 +48,54 @@ function makeBoard() {
     return board;
 }
 var startingPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+addPeices(board, startingPosition);
 function addPeices(board, startingPosition) {
     var currentElement = 0;
     var currentCharacter = startingPosition.charAt(currentElement);
     var column = 1;
     var row = 8;
     while (currentCharacter != " ") {
-        while (currentCharacter != "/") {
-            if (typeof currentCharacter == "string") {
-                board[((column - 1) * 8) + (row - 1)].peice = currentCharacter;
-                var letter = column + 97; // + 97 is ascii offset for a
-                var number = row;
-                var letNum = letter + number;
-                document.getElementById(letNum).innerHTML = currentCharacter;
-                currentElement++;
-                currentCharacter = startingPosition.charAt(currentElement);
-                column++;
-            }
-            else if (typeof currentCharacter == "number") {
-                column = column + currentCharacter;
-            }
-            else {
-                alert("something went wrong in addPeices function!\n");
-            }
+        if (currentCharacter == "/") {
+            row--;
+            column = 1;
         }
-        row--;
-        column = 1;
+        else if (isNaN(+currentCharacter)) {
+            board[((column - 1) * 8) + (row - 1)].peice = currentCharacter;
+            column++;
+        }
+        else {
+            column = column + +currentCharacter;
+        }
+        currentElement++;
+        currentCharacter = startingPosition.charAt(currentElement);
     }
 }
+window.addEventListener('load', function () {
+    for (var row = 8; row >= 1; row--) {
+        var _loop_1 = function (column) {
+            var button = document.createElement('button');
+            var buttonID = letters[column] + row.toString();
+            button.id = buttonID;
+            button.innerHTML = board[((column - 1) * 8) + (row - 1)].peice || ' ';
+            button.onclick = function () { getPeiceMovement(buttonID); };
+            document.body.appendChild(button);
+        };
+        for (var column = 8; column >= 1; column--) {
+            _loop_1(column);
+        }
+        document.body.appendChild(document.createElement('br'));
+    }
+});
 var startPos = null;
 function getPeiceMovement(square) {
     // if not clicked anywhere yet, and clicked a square, set click to startPos. if not clicked anywhere yet and clicked not a square, do nothing. 
     // if already clicked, and clicked a square, set click to endPos. if already clicked and clicked not a square, set startPos to null
+    alert('getPeiceMovement');
     if (startPos == null && square.length == 2) {
-        startPos = document.getElementById(square).innerHTML;
+        startPos = square;
     }
     else if (startPos != null && square.length == 2) {
-        var endPos = document.getElementById(square).innerHTML;
+        var endPos = square;
         movePeice(board, startPos, endPos);
         startPos = null;
     }
@@ -94,12 +105,12 @@ function getPeiceMovement(square) {
 }
 function movePeice(board, startPos, endPos) {
     //let startSquareLetter = +endPos.charAt(0) - 97;
-    board[((letters.(endPos.charAt(0)) - 1) * 8) + (letters.(endPos.charAt(1)) - 1)].peice = board[((letters.(startPos.charAt(0)) - 1) * 8) + (letters.a(startPos.charAt(1)) - 1)].peice;
-    board[((letters.(startPos.charAt(0)) - 1) * 8) + (letters.a(startPos.charAt(1)) - 1)].peice = null;
+    board[((letters[endPos.charAt(0)] - 1) * 8) + (+endPos.charAt(1) - 1)].peice = board[((letters[startPos.charAt(0)] - 1) * 8) + (+startPos.charAt(1) - 1)].peice;
+    board[((letters[startPos.charAt(0)] - 1) * 8) + (+startPos.charAt(1) - 1)].peice = null;
     document.getElementById(startPos).innerHTML = "";
-    document.getElementById(endPos).innerHTML = board[((letters.(endPos.charAt(0)) - 1) * 8) + (letters.(endPos.charAt(1)) - 1)].peice;
+    document.getElementById(endPos).innerHTML = board[((letters[endPos.charAt(0)] - 1) * 8) + (+endPos.charAt(1) - 1)].peice;
 }
-// .charA
+//     <button id="a1" onclick="getPeiceMovement('a1');">a1</button>
 /*
 function addPeices (board: square[]){
     // place white pons
